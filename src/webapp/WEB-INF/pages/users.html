@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <style>
+        .content {
+            margin: 20px 200px;
+            font-family: Arial,sans-serif;
+            border: burlywood solid 2px;
+            background-color: beige;
+        }
+        .table-head {
+            padding: 15px;
+            color: darkolivegreen;
+            font-size: large;
+        }
+        .table-column {
+            width: 250px;
+            height: 35px;
+            vertical-align: auto;
+            padding-left: 5px;
+        }
+        .table-column-first {
+            width: 50px;
+            height: 35px;
+            vertical-align: auto;
+            padding-left: 5px;
+        }
+        .table-head-line {
+            background-color: coral;
+            color: aliceblue;
+        }
+        .content .form-control {
+            width: 200px;
+            height: 20px;
+            margin: 10px 20px;
+            border: coral 2px solid;
+            border-radius: 5px;
+            color: darkolivegreen;
+            font-size: medium;
+        }
+        /*.btn {*/
+        /*    width: 100px;*/
+        /*    background-color: blue;*/
+        /*    color: aliceblue;*/
+        /*    font-size: large;*/
+        /*    border: solid 2px royalblue;*/
+        /*    border-radius: 5px;*/
+        /*}*/
+
+    </style>
+    <title>Пользователи</title>
+</head>
+<body>
+<div class="container">
+    <a href="/"><h3>Главная страница</h3></a>
+    <br><br>
+    <div class="col-md-9">
+        <h4 th:text="${title}"></h4>
+    </div>
+    <table class="content">
+    <tr class="table-head-line">
+        <th>Ид пользователя</th>
+        <th>Username</th>
+        <th>email</th>
+        <th>Password</th>
+
+        <th>Редактировать</th>
+        <th>Удалить</th>
+    </tr>
+    <tr  th:each="user : ${listUsers}" >
+        <td th:text="${user.id}" class="table-column-first"></td>
+        <td th:text="${user.username}" class="table-column"></td>
+        <td th:text="${user.email}" class="table-column" ></td>
+        <td th:text="${user.password}" class="table-column" ></td>
+
+        <td> <a th:href="@{'edit/'+ ${user.id}}">редактировать</a></td>
+        <td> <a th:href="@{'remove/'+ ${user.id}}">удалить</a></td>
+    </tr>
+
+    </table>
+    <div class="content">
+        <h3>Добавить пльзователя</h3>
+        <form  class="form-group" action="#" th:action="@{/adduser}" th:object="${user}" method="post" accept-charset="utf-8">
+            <label >Username </label>
+            <input  class="form-control" type="text" name="username" required>
+            <label >Email</label>
+            <input  class="form-control" type="email" name="email" required>
+            <label >Пароль</label>
+            <input  class="form-control" type="text" name="password" required>
+            <input  class="btn btn-primary" type="submit" value="Добавить">
+        </form>
+    </div>
+</div>
+</body>
+</html>
