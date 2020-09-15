@@ -6,10 +6,15 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+import web.dao.UserDao;
 import web.dao.UserDaoImpl;
 import web.service.UserService;
 
@@ -19,6 +24,9 @@ import java.util.Properties;
 
 @Configuration
 @PropertySource("classpath:db.properties")
+@EnableJpaRepositories(basePackages = "web")
+
+@EnableTransactionManagement
 @ComponentScan(value = "java")
 public class AppConfig {
     @Autowired
@@ -39,7 +47,6 @@ public class AppConfig {
     public LocalContainerEntityManagerFactoryBean getEntityManager() {
         LocalContainerEntityManagerFactoryBean emFactory = new LocalContainerEntityManagerFactoryBean();
         emFactory.setDataSource(getDataSource());
-//        emFactory.setPersistenceProviderClass(HibernatePersistenceProvider.class);
         emFactory.setPackagesToScan("web.model");
         emFactory.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
         Properties props = new Properties();
@@ -56,14 +63,42 @@ public class AppConfig {
         JpaTransactionManager transactionManager = new JpaTransactionManager();
         transactionManager.setEntityManagerFactory(getEntityManager().getObject());
         System.out.println("Бин транзакшен манагер создан");
+
         return transactionManager;
     }
 
 //    @Bean
-//    public UserDaoImpl getUserDao() {
-//        return new UserDaoImpl();
+//    public PlatformTransactionManager transactionManager() {
+//        JpaTransactionManager transactionManager = new JpaTransactionManager();
+//        transactionManager.setEntityManagerFactory(entityManagerFactory().getObject());
+//        return transactionManager;    }
+//
+//
+//    @Bean
+//    public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
+//        LocalContainerEntityManagerFactoryBean em  = new LocalContainerEntityManagerFactoryBean();
+//        em.setDataSource(getDataSource());
+//        em.setPackagesToScan(new String[]{"web.model"});
+//        JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
+//        em.setJpaVendorAdapter(vendorAdapter);
+//        em.setJpaProperties(additionalProperties());
+//        return em;
+//    }
+//
+//    Properties additionalProperties() {
+//        Properties properties = new Properties();
+//        properties.put("hibernate.dialect", env.getRequiredProperty("hibernate.dialect"));
+//        properties.put("hibernate.show_sql", env.getRequiredProperty("hibernate.show_sql"));
+//        properties.put("hibernate.format_sql", env.getRequiredProperty("hibernate.format_sql"));
+//        properties.put("hibernate.hbm2ddl.auto", env.getRequiredProperty("hibernate.hbm2ddl.auto"));
+//        return properties;
 //    }
 
+//    @Bean
+//    public UserDao getUserDao() {
+//        return new UserDaoImpl();
+//    }
+//
 //    @Bean
 //    public UserService getUserService() {
 //        return new UserService();

@@ -1,8 +1,8 @@
 package web.dao;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import web.model.User;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -13,13 +13,12 @@ public class UserDaoImpl implements UserDao{
     @PersistenceContext
     EntityManager entityManager;
 
-
     @Override
     public User getUserByUsername(String name) {
         System.out.println("Получаем юзера");
 
         User u = (User) entityManager.createQuery("SELECT  u from User u where u.username = :name", User.class)
-                .setParameter("name", name);
+                .setParameter("name", name).getSingleResult();
 
         System.out.println(u.toString());
         return u;
