@@ -14,6 +14,7 @@ import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
     private final UserDetailsService userDetailsService; // сервис, с помощью которого тащим пользователя
     private final SuccessUserHandler successUserHandler; // класс, в котором описана логика перенаправления пользователей по ролям
 
@@ -29,10 +30,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        // http.csrf().disable(); - попробуйте выяснить сами, что это даёт
-        http.authorizeRequests()
-                .antMatchers("/").permitAll() // доступность всем
-                .antMatchers("/user").access("hasAnyRole('ROLE_USER')") // разрешаем входить на /user пользователям с ролью User
+//         http.csrf().disable();// - попробуйте выяснить сами, что это даёт
+        http
+                .csrf().disable()
+                .authorizeRequests()
+                .antMatchers("/").permitAll()
+                .antMatchers("/remove/**").permitAll()
+                .antMatchers("/all").access("hasAnyRole('ROLE_ADMIN')")
+                .antMatchers("/edituser").access("hasAnyRole('ROLE_ADMIN')")
+                .antMatchers("/user/**").authenticated()
                 .and().formLogin()  // Spring сам подставит свою логин форму
                 .successHandler(successUserHandler); // подключаем наш SuccessHandler для перенеправления по ролям
     }

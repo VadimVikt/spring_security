@@ -3,25 +3,43 @@ package jm.security.example.model;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import javax.persistence.*;
 import java.util.Collection;
 import java.util.Set;
 
 // Для того, чтобы в дальнейшим использовать класс User в Spring Security, он должен реализовывать интерфейс UserDetails.
 // UserDetails можно представить, как адаптер между БД пользователей и тем что требуется Spring Security внутри SecurityContextHolder
+@Entity
+@Table(name = "users")
 public class User implements UserDetails {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name; // уникальное значение
+
+    @Column(name = "username")
+    private String username; // уникальное значение
+
+    @Column(name = "password")
     private String password;
+
+    @Column(name = "email")
+    private String email;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "roles_users",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
 
     public User() {
 
     }
 
-    public User(Long id, String name, String password, Set<Role> roles) {
+    public User(Long id, String username, String password, String email, Set<Role> roles) {
         this.id = id;
-        this.name = name;
+        this.username = username;
         this.password = password;
+        this.email = email;
         this.roles = roles;
     }
 
@@ -33,12 +51,8 @@ public class User implements UserDetails {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+    public void setUsername(String name) {
+        this.username = name;
     }
 
 
@@ -54,7 +68,7 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() {
-        return name;
+        return username;
     }
 
     @Override
@@ -87,5 +101,24 @@ public class User implements UserDetails {
 
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", email='" + email + '\'' +
+                ", roles=" + roles +
+                '}';
     }
 }
